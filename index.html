@@ -3,42 +3,56 @@
 <head>
     <title>Pizza Clicker</title>
 
-    <!-- Combined CSS -->
     <style>
-        /* General page styling */
         body {
             background-color: lightblue;
             font-family: Arial, sans-serif;
         }
 
-        /* Score label */
+        /* Version / Update Label */
+        #updateLabel {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
+            font-weight: bold;
+            color: #222;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.25);
+        }
+
+        /* Pizza Counter */
         #scoreLabel {
             position: absolute;
             left: 575px;
             top: 100px;
         }
 
-        /* Achievements button */
-        #achievementsBtn {
+        /* Top Buttons */
+        #achievementsBtn, #updatesBtn {
             position: absolute;
             right: 20px;
-            top: 20px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
         }
 
-        /* ⭐ Updates button */
-        #updatesBtn {
+        #achievementsBtn { top: 20px; }
+        #updatesBtn { top: 70px; }
+
+        /* Save / Reset Buttons */
+        #saveBtn, #resetBtn {
             position: absolute;
-            right: 20px;
-            top: 70px;
+            bottom: 100px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
         }
 
-        /* Pizza button */
+        #saveBtn { left: 550px; }
+        #resetBtn { right: 550px; }
+
+        /* Pizza Button */
         #pizzaButton {
             position: absolute;
             left: 675px;
@@ -50,7 +64,7 @@
             cursor: pointer;
         }
 
-        /* Section titles */
+        /* Section Titles */
         #clickTitle {
             position: absolute;
             left: 340px;
@@ -63,8 +77,8 @@
             top: 300px;
         }
 
-        /* Click upgrade buttons */
-        #upgrade1, #upgrade2, #upgrade3 {
+        /* Click Upgrades */
+        #upgrade1, #upgrade2, #upgrade3, #upgrade4 {
             position: absolute;
             left: 340px;
             width: 150px;
@@ -74,8 +88,21 @@
         #upgrade1 { top: 350px; }
         #upgrade2 { top: 400px; }
         #upgrade3 { top: 450px; }
+        #upgrade4 { top: 500px; }
 
-        /* Auto upgrade buttons */
+        /* Click Upgrade Labels */
+        #upgrade1Label, #upgrade2Label, #upgrade3Label, #upgrade4Label {
+            position: absolute;
+            left: 500px;
+            font-weight: bold;
+        }
+
+        #upgrade1Label { top: 350px; }
+        #upgrade2Label { top: 400px; }
+        #upgrade3Label { top: 450px; }
+        #upgrade4Label { top: 500px; }
+
+        /* Auto Upgrades */
         #chefBtn, #ovenBtn, #restaurantBtn, #managerBtn {
             position: absolute;
             left: 1000px;
@@ -88,7 +115,7 @@
         #restaurantBtn { top: 450px; }
         #managerBtn { top: 500px; }
 
-        /* Auto upgrade labels */
+        /* Auto Upgrade Labels */
         #chefLabel, #ovenLabel, #restaurantLabel, #managerLabel {
             position: absolute;
             left: 1160px;
@@ -100,7 +127,24 @@
         #restaurantLabel { top: 450px; }
         #managerLabel { top: 500px; }
 
-        /* Achievements modal overlay */
+        /* Achievement Popup */
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: gold;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Achievements Modal */
         #achievementModal {
             position: fixed;
             top: 0;
@@ -114,17 +158,17 @@
             z-index: 9998;
         }
 
-        /* Achievements white box */
         .achievement-box {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            max-width: 400px;
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
             text-align: center;
-            z-index: 9999;
         }
 
-        /* ⭐ Updates modal overlay */
+        /* Updates Modal */
         #updatesModal {
             position: fixed;
             top: 0;
@@ -138,7 +182,6 @@
             z-index: 9998;
         }
 
-        /* ⭐ Updates white box */
         .updates-box {
             background: white;
             padding: 30px;
@@ -146,28 +189,46 @@
             width: 400px;
             height: 300px;
             text-align: center;
-            z-index: 9999;
+            overflow-y: auto;
         }
     </style>
 </head>
 
 <body>
 
+    <!-- Big Update Label -->
+    <h1 id="updateLabel">New Update – Version 1.1.0</h1>
+
+    <!-- Pizza Counter -->
     <h1 id="scoreLabel">Pizzas: 0</h1>
 
+    <!-- Top Buttons -->
     <button id="achievementsBtn" onclick="showAchievements()">🏆 Achievements</button>
-
-    <!-- ⭐ NEW UPDATES BUTTON -->
     <button id="updatesBtn" onclick="openUpdates()">Updates</button>
 
+    <!-- Save / Reset -->
+    <button id="saveBtn" onclick="saveGame()">Save Game</button>
+    <button id="resetBtn" onclick="resetGame()">Reset Game</button>
+
+    <!-- Pizza Button -->
     <button id="pizzaButton" onclick="pizzaClicked()">🍕</button>
 
+    <!-- Click Upgrades -->
     <h2 id="clickTitle">Click Upgrades</h2>
 
     <button id="upgrade1" onclick="buyupgrade1()">Upgrade 1 (Cost: 10 Pizzas +0.1 per click)</button>
-    <button id="upgrade2" onclick="buyupgrade2()">Upgrade 2 (Cost: 100 Pizzas +1.2 per click)</button>
-    <button id="upgrade3" onclick="buyupgrade3()">Upgrade 3 (Cost: 250 Pizzas +3 per click)</button>
+    <p id="upgrade1Label">Owned: 0</p>
 
+    <button id="upgrade2" onclick="buyupgrade2()">Upgrade 2 (Cost: 100 Pizzas +1.2 per click)</button>
+    <p id="upgrade2Label">Owned: 0</p>
+
+    <button id="upgrade3" onclick="buyupgrade3()">Upgrade 3 (Cost: 250 Pizzas +3.2 per click)</button>
+    <p id="upgrade3Label">Owned: 0</p>
+
+    <button id="upgrade4" onclick="buyupgrade4()">Upgrade 4 (Cost: 1000 Pizzas +13 per click)</button>
+    <p id="upgrade4Label">Owned: 0</p>
+
+    <!-- Auto Upgrades -->
     <h2 id="autoTitle">Auto Upgrades</h2>
 
     <button id="chefBtn" onclick="buyChef()">Chef (Cost: 50 Pizzas +0.1/sec)</button>
@@ -176,30 +237,45 @@
     <button id="ovenBtn" onclick="buyOven()">Oven (Cost: 500 Pizzas +1.5/sec)</button>
     <p id="ovenLabel">Owned: 0</p>
 
-    <button id="restaurantBtn" onclick="buyRestaurant()">Restaurant (Cost: 2000 Pizzas +5/sec)</button>
+    <button id="restaurantBtn" onclick="buyRestaurant()">Restaurant (Cost: 2000 Pizzas +6.5/sec)</button>
     <p id="restaurantLabel">Owned: 0</p>
 
     <button id="managerBtn" onclick="buyManager()">Manager (Cost: 5000 Pizzas +17.5/sec)</button>
     <p id="managerLabel">Owned: 0</p>
 
-    <!-- ⭐ NEW UPDATES POPUP -->
-<div id="updatesModal">
-    <div class="updates-box">
-        <h2>Updates<br>Version 1.0.1<br>New Upgrades:<br>Manager<br>New Achievements:<br> Robotic Workers<br> Name Changes to Achievements <br> More organized game UI<br> More Updates in the future....</h2>
-        <button onclick="closeUpdates()">Close</button>
+    <!-- Achievements Modal -->
+    <div id="achievementModal">
+        <div class="achievement-box" id="achievementContent"></div>
     </div>
-</div>
 
+    <!-- Updates Modal -->
+    <div id="updatesModal">
+        <div class="updates-box">
+            <h2>Updates Version 1.1.0</h2>
+            <ul>
+                <br> Added 8 new achievements: "Clicker", "Upgrade Collector", "Boss of Managers", "Automation Master", "Michallin Chef", "Corporation", "Monopolizer", and "All achiever". <br><br>
+                - "Clicker": Unlock by reaching 1 PPS. <br>
+                - "Upgrade Collector": Unlock by buying 10 of each click upgrade. <br>
+                - "Boss of Managers": Unlock by hiring 10 Managers. <br>
+                - "Automation Master": Unlock by reaching 200 PPS. <br>
+                - "Michallin Chef": Unlock by making 500,000 pizzas. <br>
+                - "Corporation": Unlock by making 1,000,000 pizzas. <br>
+                - "Monopolizer": Unlock by reaching 1,000 PPS. <br>
+                - "All achiever": Unlock by achieving all other achievements. <br><br>
 
-    <script>
-        function openUpdates() {
-            document.getElementById("updatesModal").style.display = "flex";
-        }
+                Added a save and reset feature. <br>
+                Balance Changes: <br>
+                - Restaurant PPS increased from 5/sec to 6.5/sec. <br>
+                - Manager PPS increased from 15/sec to 17.5/sec. <br><br>
 
-        function closeUpdates() {
-            document.getElementById("updatesModal").style.display = "none";
-        }
-    </script>
+                New click upgrades added: <br>
+                - Upgrade 4: Cost 1000 Pizzas, +13 per click. <br>
+                New UI elements added for click upgrades to show how many are owned. <br><br>
+            </ul>
+
+            <button onclick="closeUpdates()">Close</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 
